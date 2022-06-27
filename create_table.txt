@@ -1,0 +1,70 @@
+CREATE TABLE `sys`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `university` VARCHAR(255),
+  `telenumber` VARCHAR(45) NOT NULL,
+  `stuid` VARCHAR(45) NOT NULL,
+  `department` VARCHAR(255) NOT NULL,
+  `city` VARCHAR(255) NOT NULL,
+  `schdis` VARCHAR(255) NOT NULL,
+  `dorm` VARCHAR(255) NOT NULL,
+  `publishing` INT ZEROFILL NULL,
+  `receiving` INT ZEROFILL NULL,
+  `published` INT ZEROFILL NULL,
+  `solved` INT ZEROFILL NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `stuid_UNIQUE` (`stuid` ASC) VISIBLE);
+  
+CREATE TABLE `sys`.`notification` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `receiverid` INT NOT NULL,
+  `taskid` INT NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `content` VARCHAR(1024) NULL,
+  `time` DATE NOT NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE `sys`.`task` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `publisherid` INT NOT NULL,
+  `receiverid` INT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `description` VARCHAR(2047) NOT NULL,
+  `status` VARCHAR(127) NOT NULL,
+  PRIMARY KEY (`id`));
+  
+ALTER TABLE `sys`.`task` 
+ADD INDEX `publisherid_idx` (`publisherid` ASC) VISIBLE,
+ADD INDEX `taskreceiverid_idx` (`receiverid` ASC) VISIBLE;
+;
+ALTER TABLE `sys`.`task` 
+ADD CONSTRAINT `taskpublisherid`
+  FOREIGN KEY (`publisherid`)
+  REFERENCES `sys`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `taskreceiverid`
+  FOREIGN KEY (`receiverid`)
+  REFERENCES `sys`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+ALTER TABLE `sys`.`notification` 
+ADD INDEX `notireceiverid_idx` (`receiverid` ASC) VISIBLE,
+ADD INDEX `notitaskid_idx` (`taskid` ASC) VISIBLE;
+;
+ALTER TABLE `sys`.`notification` 
+ADD CONSTRAINT `notireceiverid`
+  FOREIGN KEY (`receiverid`)
+  REFERENCES `sys`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `notitaskid`
+  FOREIGN KEY (`taskid`)
+  REFERENCES `sys`.`task` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
